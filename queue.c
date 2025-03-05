@@ -51,12 +51,30 @@ element_t *q_new_element(char *str)
 /* Insert an element at head of queue */
 bool q_insert_head(struct list_head *head, char *s)
 {
+    if (!head)
+        return false;
+
+    element_t *new_node = q_new_element(s);
+
+    if (!new_node)
+        return false;
+
+    list_add(&new_node->list, head);
     return true;
 }
 
 /* Insert an element at tail of queue */
 bool q_insert_tail(struct list_head *head, char *s)
 {
+    if (!head)
+        return false;
+
+    element_t *new_node = q_new_element(s);
+
+    if (!new_node)
+        return false;
+
+    list_add_tail(&new_node->list, head);
     return true;
 }
 
