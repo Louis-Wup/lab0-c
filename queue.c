@@ -42,8 +42,10 @@ element_t *q_new_element(char *str)
         return NULL;
 
     new_node->value = (char *) malloc(strlen(str) + 1);
-    if (!new_node->value)
+    if (!new_node->value) {
+        free(new_node);
         return NULL;
+    }
 
     strncpy(new_node->value, str, strlen(str) + 1);
     return new_node;
