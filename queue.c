@@ -128,6 +128,13 @@ int q_size(struct list_head *head)
     return len;
 }
 
+void q_delete_element(struct list_head *node)
+{
+    element_t *element = list_entry(node, element_t, list);
+    list_del_init(&element->list);
+    q_release_element(element);
+}
+
 /* Delete the middle node in queue */
 bool q_delete_mid(struct list_head *head)
 {
