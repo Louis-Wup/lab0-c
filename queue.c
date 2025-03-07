@@ -238,17 +238,13 @@ void q_reverse(struct list_head *head)
     if (!head || list_empty(head) || list_is_singular(head))
         return;
 
-    struct list_head *l = head->next, *r = head->prev;
-    struct list_head *safe_l = NULL, *safe_r = NULL;
-    while (l != r) {
-        safe_l = l->next;
-        safe_r = r->prev;
-        q_swap_two_node(l, r);
-        if (l->prev == r)
-            break;
-        l = safe_l;
-        r = safe_r;
+    struct list_head *entry = NULL, *safe = NULL;
+    list_for_each_safe (entry, safe, head) {
+        entry->next = entry->prev;
+        entry->prev = safe;
     }
+    entry->next = entry->prev;
+    entry->prev = safe;
 }
 
 /* Reverse the nodes of the list k at a time */
