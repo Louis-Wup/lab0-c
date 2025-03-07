@@ -205,6 +205,33 @@ void q_swap(struct list_head *head)
     // https://leetcode.com/problems/swap-nodes-in-pairs/
 }
 
+void q_swap_two_node(struct list_head *l, struct list_head *r)
+{
+    if (l->next == r) {
+        struct list_head *l_left = l->prev, *r_right = r->next;
+
+        l->prev = r;
+        l->next = r_right;
+        r->prev = l_left;
+        r->next = l;
+
+        l_left->next = r;
+        r_right->prev = l;
+
+    } else {
+        struct list_head *l_left = l->prev, *l_right = l->next;
+        struct list_head *r_left = r->prev, *r_right = r->next;
+
+        l->prev = r_left;
+        l->next = r_right;
+        r->prev = l_left;
+        r->next = l_right;
+
+        l_left->next = l_right->prev = r;
+        r_left->next = r_right->prev = l;
+    }
+}
+
 /* Reverse elements in queue */
 void q_reverse(struct list_head *head) {}
 
