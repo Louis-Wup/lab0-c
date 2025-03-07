@@ -205,6 +205,10 @@ void q_swap(struct list_head *head)
     // https://leetcode.com/problems/swap-nodes-in-pairs/
 }
 
+/*
+ * Be aware that the function will only work correctly when
+ * the parameter l is closer to the head than r.
+ */
 void q_swap_two_node(struct list_head *l, struct list_head *r)
 {
     if (l->next == r) {
