@@ -152,6 +152,16 @@ bool q_delete_mid(struct list_head *head)
     return true;
 }
 
+int q_strncmp(const struct list_head *a, const struct list_head *b)
+{
+    const element_t *e_a = list_entry(a, element_t, list);
+    const element_t *e_b = list_entry(b, element_t, list);
+    int len_a = strlen(e_a->value);
+    int len_b = strlen(e_b->value);
+    int n = len_a > len_b ? len_a + 1 : len_b + 1;
+    return strncmp(e_a->value, e_b->value, n);
+}
+
 /* Delete all nodes that have duplicate string */
 bool q_delete_dup(struct list_head *head)
 {
