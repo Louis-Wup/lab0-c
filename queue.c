@@ -173,25 +173,19 @@ bool q_delete_dup(struct list_head *head)
         return true;
 
     /*
-     * If the value of "e_from" is the same as "e_to", set the boolean variable
-     * "delete" to true and move the "to" pointer forward until a different
-     * element value is encountered. Then, delete all nodes from "from" to "to".
+     * If the value of string in "from" is the same as "to", set the boolean
+     * variable "delete" to true and move the "to" pointer forward until a
+     * different string value is encountered. Then, delete all nodes from "from"
+     * to "to" (not include).
      */
 
     bool delete = false;
     struct list_head *from = head->next, *to = head->next->next;
-    element_t const *e_from = NULL, *e_to = NULL;
 
     while (from != head && to != head) {
-        e_from = list_entry(from, element_t, list);
-        e_to = list_entry(to, element_t, list);
-        int n = strlen(e_from->value) > strlen(e_to->value)
-                    ? strlen(e_from->value) + 1
-                    : strlen(e_to->value) + 1;
-        while (to != head && !strncmp(e_from->value, e_to->value, n)) {
+        while (to != head && !q_strncmp(from, to)) {
             delete = true;
             to = to->next;
-            e_to = list_entry(to, element_t, list);
         }
         if (delete) {
             delete = false;
