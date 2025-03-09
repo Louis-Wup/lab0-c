@@ -351,10 +351,67 @@ int q_descend(struct list_head *head)
     return cnt;
 }
 
+struct list_head *q_merge_two_lists(struct list_head *head_a,
+                                    struct list_head *head_b,
+                                    bool descend)
+{
+    struct list_head head, *ptr = &head;
+    struct list_head *a = head_a->next, *b = head_b->next;
+    struct list_head *last_a = head_a->prev, *last_b = head_b->prev;
+    INIT_LIST_HEAD(ptr);
+    while (a != head_a && b != head_b) {
+        if ((q_strncmp(a, b) ^ descend) < 0) {
+            ptr->next = a;
+            a->prev = ptr;
+            a = a->next;
+        } else {
+            ptr->next = b;
+            b->prev = ptr;
+            b = b->next;
+        }
+        ptr = ptr->next;
+    }
+    if (a == head_a) {
+        ptr->next = b;
+        b->prev = ptr;
+        last_b->next = &head;
+        head.prev = last_b;
+    } else {
+        ptr->next = a;
+        a->prev = ptr;
+        last_a->next = &head;
+        head.prev = last_a;
+    }
+    INIT_LIST_HEAD(head_a);
+    INIT_LIST_HEAD(head_b);
+    list_splice_tail_init(&head, head_a);
+    return head_a;
+}
+
 /* Merge all the queues into one sorted queue, which is in ascending/descending
  * order */
 int q_merge(struct list_head *head, bool descend)
 {
     // https://leetcode.com/problems/merge-k-sorted-lists/
-    return 0;
+    int size = list_entry(head, queue_contex_t, chain)->size;
+    if (size == 0)
+        return 0;
+    else if (size == 1)
+        return q_size(list_entry(head->next, queue_contex_t, chain)->q);
+
+    struct list_head *ptr = head->next, *ptr_end = head->prev;
+    for (; size != 1; size = (size + 1) / 2) {
+        for (int cnt = size / 2; cnt != 0; cnt--) {
+            struct list_head *left = list_entry(ptr, queue_contex_t, chain)->q;
+            struct list_head *right =
+                list_entry(ptr_end, queue_contex_t, chain)->q;
+            q_merge_two_lists(left, right, descend);
+            right = NULL;
+            ptr = ptr->next;
+            ptr_end = ptr_end->prev;
+        }
+        ptr = head->next;
+    }
+
+    return q_size(list_entry(ptr, queue_contex_t, chain)->q);
 }
