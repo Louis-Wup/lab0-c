@@ -10,6 +10,18 @@
  *   cppcheck-suppress nullPointer
  */
 
+element_t *q_new_element(char *str);
+
+void q_delete_element(struct list_head *node);
+
+int q_strncmp(const struct list_head *a, const struct list_head *b);
+
+void q_swap_two_node(struct list_head *l, struct list_head *r);
+
+struct list_head *q_merge_two_lists(struct list_head *head_a,
+                                    struct list_head *head_b,
+                                    bool descend);
+
 /* Create an empty queue */
 struct list_head *q_new()
 {
@@ -112,7 +124,6 @@ element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
 
     return ptr;
 }
-
 
 /* Return number of elements in queue */
 int q_size(struct list_head *head)
