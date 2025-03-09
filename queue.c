@@ -402,36 +402,27 @@ struct list_head *q_merge_two_lists(struct list_head *head_a,
                                     struct list_head *head_b,
                                     bool descend)
 {
-    struct list_head head, *ptr = &head;
+    struct list_head *ptr = head_a;
     struct list_head *a = head_a->next, *b = head_b->next;
-    struct list_head *last_a = head_a->prev, *last_b = head_b->prev;
-    INIT_LIST_HEAD(ptr);
-    while (a != head_a && b != head_b) {
-        if ((q_strncmp(a, b) ^ descend) < 0) {
-            ptr->next = a;
-            a->prev = ptr;
-            a = a->next;
-        } else {
-            ptr->next = b;
-            b->prev = ptr;
-            b = b->next;
-        }
-        ptr = ptr->next;
+
+    for (struct list_head **node = NULL; a != head_a && b != head_b;
+         *node = (*node)->next) {
+        node = (q_strncmp(a, b) ^ descend) < 0 ? &a : &b;
+        ptr->next = *node;
+        (*node)->prev = ptr;
+        ptr = (*node);
     }
     if (a == head_a) {
         ptr->next = b;
         b->prev = ptr;
-        last_b->next = &head;
-        head.prev = last_b;
+        head_b->prev->next = head_a;
+        head_a->prev = head_b->prev;
+
     } else {
         ptr->next = a;
         a->prev = ptr;
-        last_a->next = &head;
-        head.prev = last_a;
     }
-    INIT_LIST_HEAD(head_a);
     INIT_LIST_HEAD(head_b);
-    list_splice_tail_init(&head, head_a);
     return head_a;
 }
 
