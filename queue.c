@@ -18,6 +18,10 @@ int q_strncmp(const struct list_head *a, const struct list_head *b);
 
 void q_swap_two_node(struct list_head *l, struct list_head *r);
 
+struct list_head *q_bubble_sort(struct list_head *head, bool descend);
+
+struct list_head *q_merge_sort(struct list_head *head, bool descend);
+
 struct list_head *q_merge_two_lists(struct list_head *head_a,
                                     struct list_head *head_b,
                                     bool descend);
@@ -294,12 +298,8 @@ void q_reverseK(struct list_head *head, int k)
     list_splice(reverse_head, head);
 }
 
-/* Sort elements of queue in ascending/descending order */
-void q_sort(struct list_head *head, bool descend)
+struct list_head *q_bubble_sort(struct list_head *head, bool descend)
 {
-    if (!head || list_empty(head) || list_is_singular(head))
-        return;
-
     for (struct list_head *ptr_end = head; ptr_end != head->next;
          ptr_end = ptr_end->prev) {
         for (struct list_head *ptr_a = head->next, *ptr_b = head->next->next;
@@ -312,7 +312,43 @@ void q_sort(struct list_head *head, bool descend)
             }
         }
     }
+    return head;
 }
+
+struct list_head *q_merge_sort(struct list_head *head, bool descend)
+{
+    if (list_empty(head) || list_is_singular(head))
+        return head;
+
+    struct list_head *slow_mid = head->next;
+    for (const struct list_head *fast = head->next;
+         fast != head && fast->next != head; fast = fast->next->next) {
+        slow_mid = slow_mid->next;
+    }
+
+    struct list_head mid_list, *mid_head = &mid_list;
+    INIT_LIST_HEAD(mid_head);
+    list_cut_position(mid_head, head, slow_mid->prev);
+
+    struct list_head *left = q_merge_sort(head, descend),
+                     *right = q_merge_sort(mid_head, descend);
+    return q_merge_two_lists(left, right, descend);
+}
+
+/* Sort elements of queue in ascending/descending order */
+void q_sort(struct list_head *head, bool descend)
+{
+    if (!head || list_empty(head) || list_is_singular(head))
+        return;
+
+    /*
+     * If you want to use bubble sort, then call q_bubble_sort(head, descend);
+     * If you want to use merge sort, then call q_merge_sort(head, descend);
+     */
+
+    q_merge_sort(head, descend);
+}
+
 
 /* Delete every node which has a node with a strictly less value anywhere to
  * the right side of it */
