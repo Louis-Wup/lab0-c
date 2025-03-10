@@ -469,7 +469,17 @@ void q_shuffle(struct list_head *head)
 
     for (int turn = q_size(head) - 1; turn; turn -= 1) {
         struct list_head *ptr = head;
-        for (int r = rand() % turn + 1; r; r -= 1) {
+        int r = rand();
+
+        /*
+         * The reason why I don't just use (float) r / ((unsigned) RAND_MAX + 1)
+         * to generate [0, 1) is that, according to the C99 standard, whether
+         * RAND_MAX's return type "int" is signed or unsigned is
+         * implementation-defined. To avoid integer overflow, I use the
+         * following code to generate random number.
+         */
+        r = (r == RAND_MAX) ? r - 1 : r;
+        for (r = (int) ((float) r / RAND_MAX * turn) + 1; r; r -= 1) {
             ptr = ptr->next;
         }
         q_swap_two_node(ptr, ptr_end);
