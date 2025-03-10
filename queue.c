@@ -468,8 +468,10 @@ void q_shuffle(struct list_head *head)
     struct list_head *ptr_end = head->prev;
 
     for (int turn = q_size(head) - 1; turn; turn -= 1) {
-        struct list_head *ptr = head;
-        for (int r = rand() % turn + 1; r; r -= 1) {
+        struct list_head *ptr = head->next;
+        int r = rand();
+        for (r = (int) ((float) r / ((unsigned) RAND_MAX + 1) * turn); r;
+             r -= 1) {
             ptr = ptr->next;
         }
         q_swap_two_node(ptr, ptr_end);
