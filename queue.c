@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "queue.h"
 
@@ -25,6 +26,8 @@ struct list_head *q_merge_sort(struct list_head *head, bool descend);
 struct list_head *q_merge_two_lists(struct list_head *head_a,
                                     struct list_head *head_b,
                                     bool descend);
+
+void q_shuffle(struct list_head *head);
 
 /* Create an empty queue */
 struct list_head *q_new()
@@ -452,4 +455,24 @@ int q_merge(struct list_head *head, bool descend)
     }
 
     return q_size(list_entry(ptr, queue_contex_t, chain)->q);
+}
+
+void q_shuffle(struct list_head *head)
+{
+    if (!head || list_empty(head) || list_is_singular(head)) {
+        return;
+    }
+
+    srand(time(NULL));
+
+    struct list_head *ptr_end = head->prev;
+
+    for (int turn = q_size(head) - 1; turn; turn -= 1) {
+        struct list_head *ptr = head;
+        for (int r = rand() % turn + 1; r; r -= 1) {
+            ptr = ptr->next;
+        }
+        q_swap_two_node(ptr, ptr_end);
+        ptr_end = ptr->prev;
+    }
 }

@@ -1056,6 +1056,35 @@ static bool do_next(int argc, char *argv[])
     return q_show(0);
 }
 
+extern void q_shuffle(struct list_head *head);
+static bool do_shuffle(int argc, char *argv[])
+{
+    if (argc != 1) {
+        report(1, "%s takes too much arguments", argv[0]);
+        return false;
+    }
+
+    if (!current || !current->q) {
+        report(3, "Warning: Calling shuffle on null queue");
+        return false;
+    }
+    error_check();
+
+    int cnt = q_size(current->q);
+    if (!cnt)
+        report(3, "Warning: Calling shuffle on empty queue");
+    else if (cnt < 2)
+        report(3, "Warning: Calling shuffle on single node");
+    error_check();
+
+    if (exception_setup(true))
+        q_shuffle(current->q);
+    set_noallocate_mode(false);
+
+    q_show(3);
+    return !error_check();
+}
+
 static void console_init()
 {
     ADD_COMMAND(new, "Create new queue", "");
@@ -1080,6 +1109,7 @@ static void console_init()
         "[str]");
     ADD_COMMAND(reverse, "Reverse queue", "");
     ADD_COMMAND(sort, "Sort queue in ascending/descening order", "");
+    ADD_COMMAND(shuffle, "Shuffle the queue", "");
     ADD_COMMAND(size, "Compute queue size n times (default: n == 1)", "[n]");
     ADD_COMMAND(show, "Show queue contents", "");
     ADD_COMMAND(dm, "Delete middle node in queue", "");
