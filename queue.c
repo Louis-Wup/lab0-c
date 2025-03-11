@@ -347,6 +347,8 @@ void q_sort(struct list_head *head, bool descend)
     /*
      * If you want to use bubble sort, then call q_bubble_sort(head, descend);
      * If you want to use merge sort, then call q_merge_sort(head, descend);
+     *
+     * Be careful, the descending order sorting is not stable sorting.
      */
 
     q_merge_sort(head, descend);
