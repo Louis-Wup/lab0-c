@@ -410,7 +410,7 @@ struct list_head *q_merge_two_lists(struct list_head *head_a,
 
     for (struct list_head **node = NULL; a != head_a && b != head_b;
          *node = (*node)->next) {
-        node = (q_strncmp(a, b) ^ descend) < 0 ? &a : &b;
+        node = ((q_strncmp(a, b) < 0) ^ descend) ? &a : &b;
         ptr->next = *node;
         (*node)->prev = ptr;
         ptr = (*node);
